@@ -11,20 +11,17 @@ ENV = os.environ
 SITEMAP = ENV.get('SITEMAP')
 VERIFY_SSL = ENV.get('VERIFY_SSL', 'YES') == 'YES'
 
-print(SITEMAP) 
-print(VERIFY_SSL) 
-
 
 def _test(page_url):
     def test_wrapped(self):
-        print("test %s" % page_url)
         try:
             response = requests.get(page_url, verify=VERIFY_SSL)
             response.raise_for_status()
         except requests.ConnectionError:
             self.fail('Connection failed on %s' % page_url)
         except requests.HTTPError:
-            self.fail('HTTP STATUS %s on %s' % (response.status_code, page_url))
+            self.fail('HTTP STATUS %s on %s' % (response.status_code,
+                                                page_url))
     return test_wrapped
 
 
@@ -74,8 +71,10 @@ def loadTests():
         sys.exit(1)
 
     for url in urls:
-        meth = 'test_%s' % binascii.hexlify(url)
-        setattr(SiteMapCrawl, meth, _test(url))
+        meth_name = 'test_%s' % binascii.hexlify(url)
+        method = _test(url)
+        method.__doc__ = 'test %s' % url
+        setattr(SiteMapCrawl, meth_name, method)
 
 
 loadTests()
