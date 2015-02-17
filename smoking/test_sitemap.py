@@ -68,6 +68,11 @@ def loadTests():
 
     urls = [loc[0].text for loc in sitemap]
 
+    if not urls:
+        print('The sitemap does not contain any url',
+              file=sys.stderr)
+        sys.exit(1)
+
     for url in urls:
         meth = 'test_%s' % binascii.hexlify(url)
         setattr(SiteMapCrawl, meth, _test(url))
