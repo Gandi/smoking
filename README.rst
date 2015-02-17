@@ -1,4 +1,5 @@
-sitemap200
-==========
+smoking
+=======
 
-Ensure your sitemap is valid.
+Ensure the url in the sitemap are correct.
+
