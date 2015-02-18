@@ -59,8 +59,9 @@ def loadTests():
     try:
         sitemap = etree.fromstring(sitemap)
     except etree.XMLSyntaxError:
-        print('The sitemap is not an XML valid document',
+        print('The sitemap is not an XML valid document:',
               file=sys.stderr)
+        print(sitemap, file=sys.stderr)
         sys.exit(1)
 
     urls = [loc[0].text for loc in sitemap]
