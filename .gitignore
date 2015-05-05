@@ -3,10 +3,10 @@
 *.project
 *.pydevproject
 *.swp
-*.db
-*.mo
+*.log
 .settings
 .idea
+screenshots
 dist/*
 build/*
 venv*
