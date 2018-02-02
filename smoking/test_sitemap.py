@@ -2,7 +2,6 @@ from __future__ import print_function
 import logging
 import os
 import sys
-import binascii
 import unittest
 
 from lxml import etree
@@ -96,8 +95,9 @@ def loadTests():
 
     urls = get_locations(SITEMAP)
 
-    for url in urls:
-        meth_name = 'test_%s' % binascii.hexlify(url)
+    for idx, url in enumerate(urls):
+        log.info('Adding test for url %s', url)
+        meth_name = 'test_%s' % idx
         method = _test(url)
         method.__doc__ = 'test %s' % url
         setattr(SiteMapCrawl, meth_name, method)
