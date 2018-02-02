@@ -12,6 +12,10 @@ SITEMAP = ENV.get('SITEMAP')
 VERIFY_SSL = ENV.get('VERIFY_SSL', 'YES') == 'YES'
 
 
+TAG_SITEMAPINDEX = '{http://www.google.com/schemas/sitemap/0.9}sitemapindex'
+TAG_URLSET = '{http://www.google.com/schemas/sitemap/0.9}urlset'
+
+
 def _test(page_url):
     def test_wrapped(self):
         try:
@@ -29,16 +33,9 @@ class SiteMapCrawl(unittest.TestCase):
     """ """
 
 
-def loadTests():
-
-    #
-    if not SITEMAP:
-        print('SITEMAP not set in the environ.',
-              file=sys.stderr)
-        sys.exit(1)
-
+def load_sitemap(sitemap_url):
     try:
-        response = requests.get(SITEMAP, verify=VERIFY_SSL)
+        response = requests.get(sitemap_url, verify=VERIFY_SSL)
         response.raise_for_status()
     except requests.ConnectionError:
         print('Cannot download the sitemap, host is down.',
@@ -63,13 +60,36 @@ def loadTests():
               file=sys.stderr)
         print(sitemap, file=sys.stderr)
         sys.exit(1)
+    return sitemap
 
-    urls = [loc[0].text for loc in sitemap]
 
-    if not urls:
-        print('The sitemap does not contain any url',
+def get_locations(sitemap_url):
+
+    sitemap = load_sitemap(sitemap_url)
+
+    if sitemap.tag == TAG_SITEMAPINDEX:
+        for url in sitemap.getchildren():
+            url = url[0].text
+            for url in get_locations(url):
+                yield url
+    elif sitemap.tag == TAG_URLSET:
+        for url in sitemap.getchildren():
+            yield url[0].text
+    else:
+        print('The sitemap is valid', file=sys.stderr)
+        print(sitemap, file=sys.stderr)
+        sys.exit(1)
+
+
+def loadTests():
+
+    #
+    if not SITEMAP:
+        print('SITEMAP not set in the environ.',
               file=sys.stderr)
         sys.exit(1)
+
+    urls = get_locations(SITEMAP)
 
     for url in urls:
         meth_name = 'test_%s' % binascii.hexlify(url)
