@@ -1,4 +1,5 @@
 from __future__ import print_function
+import logging
 import os
 import sys
 import binascii
@@ -6,6 +7,9 @@ import unittest
 
 from lxml import etree
 import requests
+
+
+log = logging.getLogger(__name__)
 
 ENV = os.environ
 SITEMAP = ENV.get('SITEMAP')
@@ -34,6 +38,7 @@ class SiteMapCrawl(unittest.TestCase):
 
 
 def load_sitemap(sitemap_url):
+    log.info("Loading sitemap %s", sitemap_url)
     try:
         response = requests.get(sitemap_url, verify=VERIFY_SSL)
         response.raise_for_status()
