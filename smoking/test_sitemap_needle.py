@@ -12,6 +12,7 @@ ENV = os.environ
 SITEMAP = ENV.get('SITEMAP')
 VERIFY_SSL = ENV.get('VERIFY_SSL', 'YES') == 'YES'
 SIZES = ENV.get('SIZES', '1280x768 768x1024 360x640').split()
+USE_NEEDLE = ENV.get('WITH_NEEDLE', 'NO') == 'YES'
 
 
 def _test(page_url):
@@ -102,7 +103,8 @@ def loadTests():
 
         globals()['TestCase%s' % size] = testcase
 
-loadTests()
+if USE_NEEDLE:
+    loadTests()
 
 
 if __name__ == '__main__':
