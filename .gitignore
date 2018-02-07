@@ -6,6 +6,7 @@
 *.log
 .settings
 .idea
+.vscode
 screenshots
 dist/*
 build/*
