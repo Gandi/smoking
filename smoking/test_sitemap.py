@@ -7,6 +7,16 @@ import unittest
 from lxml import etree
 import requests
 
+from . import __version__
+
+requests = requests.session()
+requests.headers.update(
+     {'User-Agent': 'smoking/%s %s %s' %
+                    (__version__,
+                     requests.headers.get('User-Agent', ''),
+                     os.environ.get('USER_AGENT', ''),
+                     )})
+
 
 log = logging.getLogger(__name__)
 
